@@ -1,0 +1,52 @@
+/*
+ * 
+ */
+
+plugins {
+	id 'java-gradle-plugin'
+	id 'groovy'
+}
+
+repositories {
+	mavenCentral()
+	jcenter()
+}
+
+dependencies {
+	implementation gradleApi(),
+			localGroovy()
+	testImplementation gradleTestKit()
+	testImplementation("org.spockframework:spock-core:${SPOCK_VER}") {
+		exclude module : 'groovy-all'
+	}
+}
+
+gradlePlugin {
+	// Define the plugin
+	plugins {
+		greeting {
+			id = 'io.waweb.mesh'
+			implementationClass = 'io.waweb.gradle.mesh.GradleMeshPlugin'
+		}
+	}
+}
+
+// Add a source set for the functional test suite
+sourceSets {
+	functionalTest {
+	}
+}
+
+gradlePlugin.testSourceSets(sourceSets.functionalTest)
+configurations.functionalTestImplementation.extendsFrom(configurations.testImplementation)
+
+// Add a task to run the functional tests
+tasks.register('functionalTest', Test) {
+	testClassesDirs = sourceSets.functionalTest.output.classesDirs
+	classpath = sourceSets.functionalTest.runtimeClasspath
+}
+
+check {
+	// Run the functional tests as part of `check`
+	dependsOn(tasks.functionalTest)
+}
