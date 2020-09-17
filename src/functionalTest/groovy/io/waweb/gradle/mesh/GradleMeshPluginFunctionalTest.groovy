@@ -15,8 +15,8 @@ public class GradleMeshPluginFunctionalTest extends Specification {
 		given:
 		def projectDir = new File("build/functionalTest")
 		projectDir.mkdirs()
-		new File(projectDir, "settings.gradle") << ""
-		new File(projectDir, "build.gradle") << """
+		new File(projectDir, "settings.gradle").text = ""
+		new File(projectDir, "build.gradle").text = """
             plugins {
                 id('io.waweb.mesh')
             }
