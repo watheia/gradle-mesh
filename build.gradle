@@ -10,11 +10,13 @@ plugins {
 repositories {
 	mavenCentral()
 	jcenter()
+	maven { url = "https://maven.gentics.com/maven2" }
 }
 
 dependencies {
 	implementation gradleApi(),
-			localGroovy()
+			localGroovy(),
+			"com.gentics.mesh:mesh-rest-client:${MESH_VER}"
 	testImplementation gradleTestKit()
 	testImplementation("org.spockframework:spock-core:${SPOCK_VER}") {
 		exclude module : 'groovy-all'
@@ -33,8 +35,7 @@ gradlePlugin {
 
 // Add a source set for the functional test suite
 sourceSets {
-	functionalTest {
-	}
+	functionalTest {}
 }
 
 gradlePlugin.testSourceSets(sourceSets.functionalTest)
