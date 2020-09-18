@@ -25,7 +25,7 @@ public class GradleMeshPlugin implements Plugin<Project> {
 		}
 
 		// Register extension model with defaults
-		final MeshExtension mesh = project.extensions.create('mesh', MeshExtension).with {
+		final MeshExtension mesh = project.extensions.create('mesh', MeshExtension).tap {
 			host = System.getenv('GRADLE_MESH_HTTP_HOST') ?: "localhost"
 			port = System.getenv('GRADLE_MESH_HTTP_PORT') ?: 8080
 			useSsl = System.getenv('GRADLE_MESH_HTTP_SSL_ENABLE') ?: false
