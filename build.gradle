@@ -16,7 +16,8 @@ repositories {
 dependencies {
 	implementation gradleApi(),
 			localGroovy(),
-			"com.gentics.mesh:mesh-rest-client:${MESH_VER}"
+			"io.reactivex:rxgroovy:${RXGROOVY_VER}",
+			"com.gentics.mesh:mesh-rest-client:${MESH_VER}"	
 	testImplementation gradleTestKit()
 	testImplementation("org.spockframework:spock-core:${SPOCK_VER}") {
 		exclude module : 'groovy-all'
