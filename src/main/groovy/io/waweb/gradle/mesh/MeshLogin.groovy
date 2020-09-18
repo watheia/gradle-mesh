@@ -13,6 +13,7 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 
 import com.gentics.mesh.rest.client.MeshRestClient
+import com.gentics.mesh.rest.client.MeshRestClientConfig
 
 /**
  * The MeshLogin task is responsible for providing a fully authenticated MeshRestClient,
@@ -20,12 +21,6 @@ import com.gentics.mesh.rest.client.MeshRestClient
  * that it is executed on every Gradle run.
  */
 class MeshLogin extends DefaultTask {
-
-	MeshLogin() {
-		this.host.convention("localhost")
-		this.port.convention(8080)
-		this.useSsl.convention(false)
-	}
 
 	private MeshRestClient _client = null
 
@@ -44,6 +39,8 @@ class MeshLogin extends DefaultTask {
 
 	@Input final Property<String> password = objectFactory.property(String)
 
+	@Input final Property<String> basePath = objectFactory.property(String)
+
 	@Inject
 	ObjectFactory getObjectFactory() {
 		throw new UnsupportedOperationException();
@@ -52,11 +49,24 @@ class MeshLogin extends DefaultTask {
 	@TaskAction
 	void run() {
 		final String host = this.host.get()
-		logger.info("Logging into mesh server on ${host}...")
+		final Integer port = this.port.get()
+		final String basePath = this.basePath.get()
 
-		_client = MeshRestClient.create(host, port.get(), useSsl.get())
+		logger.info("Logging into mesh server on ${host}:${port}${basePath}...")
+
+		final MeshRestClientConfig clientConfig = MeshRestClientConfig.newConfig()
+				.setHost(host)
+				.setPort(port)
+				.setBasePath(basePath)
+				.setSsl(useSsl.get())
+				.build()
+
+		_client = MeshRestClient.create(clientConfig)
 				.setLogin(userName.get(), password.get())
-		_client.login().blockingGet()
+
+		_client.login()
+				.doOnError({ it.printStackTrace() })
+				.blockingGet()
 
 		logger.info("Login complete.")
 	}

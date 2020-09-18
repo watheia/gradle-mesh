@@ -11,7 +11,6 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 
 import com.gentics.mesh.rest.client.MeshRestClient
-
 /**
  *
  */
@@ -23,5 +22,4 @@ class MeshClientTask extends DefaultTask {
 	ObjectFactory getObjectFactory() {
 		throw new UnsupportedOperationException()
 	}
-
 }

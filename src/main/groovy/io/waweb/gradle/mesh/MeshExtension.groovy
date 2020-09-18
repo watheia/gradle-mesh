@@ -7,7 +7,7 @@ class MeshExtension {
 	String host
 	Integer port
 	Boolean useSsl
-	String projectName
+	String basePath
 	String userName
 	String password
 }

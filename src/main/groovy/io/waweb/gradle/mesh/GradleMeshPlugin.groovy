@@ -16,6 +16,8 @@ public class GradleMeshPlugin implements Plugin<Project> {
 
 	final static String MESH_GROUP = "Mesh"
 
+	final static String BASE_PATH = "/api/v2"
+
 	public void apply(Project project) {
 
 		project.buildscript.repositories.configure {
@@ -31,18 +33,19 @@ public class GradleMeshPlugin implements Plugin<Project> {
 			useSsl = System.getenv('GRADLE_MESH_HTTP_SSL_ENABLE') ?: false
 			userName = System.getenv('GRADLE_MESH_USER') ?: "admin"
 			password = System.getenv('GRADLE_MESH_PASSWORD') ?: "admin"
-			projectName = project.name
+			basePath = BASE_PATH
 		}
 
 		// Register the login task
-		final MeshLogin meshLogin = project.tasks.register("meshLogin", MeshLogin) { MeshLogin t ->
+		final MeshLogin meshLogin = project.tasks.create("meshLogin", MeshLogin) { MeshLogin t ->
 			t.group = MESH_GROUP
 			t.description = "Login to mesh rest API"
-			t.host.set({ mesh.host })
-			t.port.set({ mesh.port })
-			t.useSsl.set({ mesh.useSsl })
-			t.userName.set({ mesh.userName })
-			t.password.set({ mesh.password })
+			t.host.set(mesh.host)
+			t.port.set(mesh.port)
+			t.useSsl.set(mesh.useSsl)
+			t.userName.set(mesh.userName)
+			t.password.set(mesh.password)
+			t.basePath.set(mesh.basePath)
 		}
 
 		final Provider<MeshRestClient> clientProvider = project.provider {
