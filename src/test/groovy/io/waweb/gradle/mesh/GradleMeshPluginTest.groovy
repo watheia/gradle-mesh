@@ -25,4 +25,15 @@ public class GradleMeshPluginTest extends Specification {
 		project.mesh.useSsl == false
 		project.mesh.projectName == "test"
 	}
+
+	def "plugin registers login task"() {
+		given:
+		def project = ProjectBuilder.builder().build()
+
+		when:
+		project.plugins.apply('io.waweb.mesh')
+
+		then:
+		project.tasks.findByName('meshLogin') != null
+	}
 }

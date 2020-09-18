@@ -4,8 +4,10 @@
 package io.waweb.gradle.mesh
 
 class MeshExtension {
-    String host
-    Integer port
-    Boolean useSsl
-    String projectName
+	String host
+	Integer port
+	Boolean useSsl
+	String projectName
+	String userName
+	String password
 }
