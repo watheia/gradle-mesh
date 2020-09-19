@@ -9,6 +9,8 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 
+import io.waweb.mesh.gradle.model.MeshProject
+
 class MeshExtension {
 
 	final Property<String> host = objectFactory.property(String)
@@ -23,7 +25,9 @@ class MeshExtension {
 
 	final Property<String> password = objectFactory.property(String)
 
-	final NamedDomainObjectContainer<MeshProjectExtension> projects = objectFactory.domainObjectContainer(MeshProjectExtension)
+	final Property<Boolean> autoCreate = objectFactory.property(Boolean)
+
+	final NamedDomainObjectContainer<MeshProject> projects = objectFactory.domainObjectContainer(MeshProject)
 
 	@Inject
 	ObjectFactory getObjectFactory() {

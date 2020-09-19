@@ -10,6 +10,7 @@ import org.gradle.api.provider.Provider
 import com.gentics.mesh.rest.client.MeshRestClient
 
 import io.waweb.mesh.gradle.tasks.DefaultMeshTask
+import io.waweb.mesh.gradle.tasks.LoadMeshProjects
 
 /**
  * Plugin entry point
@@ -28,6 +29,7 @@ class GradleMeshPlugin implements Plugin<Project> {
 			apiKey.convention(System.getenv('GRADLE_MESH_API_KEY'))
 			userName.convention(System.getenv('GRADLE_MESH_USER') ?: "admin")
 			password.convention(System.getenv('GRADLE_MESH_PASS') ?: "admin")
+			autoCreate.convention(true)
 		}
 
 		// Register the login task
@@ -49,7 +51,18 @@ class GradleMeshPlugin implements Plugin<Project> {
 		// Ensure all mesh tasks have an authenticated client
 		project.tasks.withType(DefaultMeshTask).all { DefaultMeshTask task ->
 			task.client.set(clientProvider)
-			task.client.finalizeValue()
+			task.client.finalizeValueOnRead()
+			task.dependsOn(meshLogin)
+		}
+
+		// register a default task for mesh projects
+		project.tasks.create("meshProjects", LoadMeshProjects) { LoadMeshProjects task ->
+			task.group = MESH_GROUP
+			task.description = "Load or create all mesh projects"
+
+			task.autoCreate.set(mesh.autoCreate)
+			task.projects.set(mesh.projects)
+
 			task.dependsOn(meshLogin)
 		}
 	}
