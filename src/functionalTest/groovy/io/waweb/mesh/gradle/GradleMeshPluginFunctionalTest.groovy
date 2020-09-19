@@ -1,7 +1,7 @@
 /**
  * @author Aaron R Miller<aaron.miller@waweb.io>
  */
-package io.waweb.gradle.mesh
+package io.waweb.mesh.gradle
 
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
@@ -9,7 +9,7 @@ import org.gradle.testkit.runner.TaskOutcome
 import spock.lang.Specification
 
 /**
- * A simple functional test for the 'io.waweb.gradle.mesh.greeting' plugin.
+ * A simple functional test for the 'io.waweb.mesh.gradle.greeting' plugin.
  */
 public class GradleMeshPluginFunctionalTest extends Specification {
 	def "can apply plugin to project"() {

@@ -1,7 +1,7 @@
 /**
  * @author Aaron R Miller<aaron.miller@waweb.io>
  */
-package io.waweb.gradle.mesh
+package io.waweb.mesh.gradle.tasks
 
 import javax.inject.Inject
 
@@ -14,7 +14,7 @@ import com.gentics.mesh.rest.client.MeshRestClient
 /**
  *
  */
-class MeshClientTask extends DefaultTask {
+abstract class DefaultMeshTask extends DefaultTask {
 
 	@Internal final Property<MeshRestClient> client = objectFactory.property(MeshRestClient)
 
@@ -22,4 +22,6 @@ class MeshClientTask extends DefaultTask {
 	ObjectFactory getObjectFactory() {
 		throw new UnsupportedOperationException()
 	}
+
+	abstract void run()
 }

@@ -1,7 +1,7 @@
 /**
  * @author Aaron R Miller<aaron.miller@waweb.io>
  */
-package io.waweb.gradle.mesh
+package io.waweb.mesh.gradle
 
 import javax.inject.Inject
 
@@ -10,6 +10,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 
 import com.gentics.mesh.rest.client.MeshRestClient
@@ -35,38 +36,47 @@ class MeshLogin extends DefaultTask {
 
 	@Input final Property<Boolean> useSsl = objectFactory.property(Boolean)
 
-	@Input final Property<String> userName = objectFactory.property(String)
+	@Optional @Input final Property<String> apiKey = objectFactory.property(String)
 
-	@Input final Property<String> password = objectFactory.property(String)
+	@Optional @Input final Property<String> userName = objectFactory.property(String)
 
-	@Input final Property<String> basePath = objectFactory.property(String)
+	@Optional @Input final Property<String> password = objectFactory.property(String)
 
 	@Inject
 	ObjectFactory getObjectFactory() {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException()
 	}
 
 	@TaskAction
 	void run() {
+
+		if(!this.apiKey.isPresent() && !this.userName.isPresent()) {
+			throw new RuntimeException("Mesh login must have apiKey or userName/password combo")
+		}
+
 		final String host = this.host.get()
 		final Integer port = this.port.get()
-		final String basePath = this.basePath.get()
-
-		logger.info("Logging into mesh server on ${host}:${port}${basePath}...")
-
+		final Boolean useSsl = this.useSsl.get()
 		final MeshRestClientConfig clientConfig = MeshRestClientConfig.newConfig()
 				.setHost(host)
 				.setPort(port)
-				.setBasePath(basePath)
-				.setSsl(useSsl.get())
+				.setSsl(useSsl)
 				.build()
 
 		_client = MeshRestClient.create(clientConfig)
-				.setLogin(userName.get(), password.get())
 
-		_client.login()
-				.doOnError({ it.printStackTrace() })
-				.blockingGet()
+		if(this.apiKey.isPresent()) {
+			final String apiKey = this.apiKey.get()
+			_client.setAPIKey(apiKey)
+		} else {
+			logger.info("Logging into mesh server on ${host}:${port}...")
+			final String userName = this.userName.get()
+			final String password = this.password.get()
+			_client.setLogin(userName, password)
+					.login()
+					.doOnError({ it.printStackTrace() })
+					.blockingGet()
+		}
 
 		logger.info("Login complete.")
 	}
