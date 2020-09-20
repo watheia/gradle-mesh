@@ -14,9 +14,10 @@ This is a proof of concept for interacting with a Gentics Mesh server. The initi
 
 ## Current Features
 
-Currently this plugin only supports simple server configuration and login. In addition, it provides a default
-`MeshTask` type which can be used to execute commands on the server. This task is guaranteed to run after
-the client is fully initialized and logged in.
+* [MeshExtension](src/main/groovy/io/waweb/mesh/gradle/MeshExtension.groovy) - basic login configuration
+* [MeshLogin](src/main/groovy/io/waweb/mesh/gradle/MeshLogin.groovy) - Initializes client login session
+* [DefaultMeshTask](src/main/groovy/io/waweb/mesh/gradle/tasks/DefaultMeshTask.groovy) - Abstract class guaranteed to run after the MeshRestClient is fully authenticated
+* [LoadMeshProject](src/main/groovy/io/waweb/mesh/gradle/tasks/LoadMeshProject.groovy) - Loads all microschemas, schemas, and nodes, for the specified `projectName`, and makes them available in a concurrent-safe `NamedDomainObjectContainer`
 
 ## Getting Started
 
@@ -59,10 +60,15 @@ mesh {
 	// apiKey = "SECURE_API_KEY"
 }
 
-task helloMesh(type: MeshTask) {}
+meshProject {
+	microschemas.all { println "Loaded Microscema: ${it.payload.name}" }
+	schemas.all { println "Loaded Schema: ${it.payload.name}" }
+	nodes.all { println "Loaded Node: ${it.payload.uuid}" }
+	doLast { println "Root Node: ${rootNode.get().uuid}" }
+}
 
 build {
-	dependsOn helloMesh
+	dependsOn meshProject
 }
 ```
 
@@ -74,5 +80,6 @@ The configuration may also be set with the following environment variables:
 * `GRADLE_MESH_API_KEY`
 * `GRADLE_MESH_USER`
 * `GRADLE_MESH_PASS`
+* `GRADLE_MESH_PROJECT`
 
 Please refer to the [Gentics Mesh Documentation](https://getmesh.io/docs/api/#users__userUuid__token_post) for more info on how to request an API key.
